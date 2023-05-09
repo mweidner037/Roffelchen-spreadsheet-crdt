@@ -99,6 +99,8 @@ class CKeepList extends CObject {
     this.set.add(this.list.idOf(value));
   }
 
+  // Move...
+
   /**
    *
    * @param {number} i
@@ -155,6 +157,7 @@ export class CSpreadsheet extends CObject {
     this.cols.keep(col);
     const rowID = this.rows.idOf(this.rows.get(row));
     const colID = this.cols.idOf(this.cols.get(col));
+    // TODO: delete instead, if value === ""?
     this.cells.set([rowID, colID], value);
   }
 
@@ -185,6 +188,7 @@ export class CSpreadsheet extends CObject {
   cells() {
     const rowsArr = [...this.rows()];
     const colsArr = [...this.cols()];
+    /** @type {string[][]} */
     const ans = [];
     for (let r = 0; r < rowsArr.length; r++) {
       const row = rowsArr[r];
@@ -197,11 +201,23 @@ export class CSpreadsheet extends CObject {
     }
     return ans;
   }
+
+  rowLength() {
+    return this.rows.length;
+  }
+
+  colLength() {
+    return this.cols.length;
+  }
 }
 
 export class SpreadsheetDoc extends AbstractDoc {
-  constructor() {
-    super();
+  /**
+   * 
+   * @param {import("@collabs/collabs").RuntimeOptions} options 
+   */
+  constructor(options) {
+    super(options);
 
     /** @type {CSpreadsheet} */
     this.spreadsheet = super.registerCollab(
