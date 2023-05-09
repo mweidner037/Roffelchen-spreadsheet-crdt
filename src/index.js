@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import FixedElements from './FixedElements';
-import RemoveKeep from './RemoveKeep';
+import './index.css';
 import Naive from './Naive';
 import NestedMap from './NestedMap';
+import RemoveKeep from './RemoveKeep';
+import RemoveKeepCollabs from './RemoveKeepCollabs';
 
 const openModeTab = (evt, mode) => {
   const modeContent = document.getElementsByClassName("modeTabContent");
@@ -39,6 +40,9 @@ root.render(
     </div>
     <div  id="removeKeep" className="modeTabContent" style={{ display: 'none' }}>
       <RemoveKeep />
+    </div>
+    <div  id="removeKeepCollabs" className="modeTabContent" style={{ display: 'none' }}>
+      <RemoveKeepCollabs />
     </div>
   </React.StrictMode>
 );
