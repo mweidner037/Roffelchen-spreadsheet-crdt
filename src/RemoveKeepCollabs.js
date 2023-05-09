@@ -7,17 +7,19 @@ import { SpreadsheetDoc } from "./CSpreadsheet";
 /** Returns a saved doc with the initial state. */
 function saveInitialDoc() {
   const iDoc = new SpreadsheetDoc({ debugReplicaID: "INIT" });
-  // Make 4 rows (incl header) and 3 columns.
-  for (let i = 0; i < 4; i++) {
-    iDoc.spreadsheet.insert_row(i);
-  }
-  for (let i = 0; i < 3; i++) {
-    iDoc.spreadsheet.insert_column(i);
-  }
-  // Set header row.
-  for (let i = 0; i < 3; i++) {
-    iDoc.spreadsheet.edit_cell(0, i, "XYZ");
-  }
+  iDoc.transact(() => {
+    // Make 4 rows (incl header) and 3 columns.
+    for (let i = 0; i < 4; i++) {
+      iDoc.spreadsheet.insert_row(i);
+    }
+    for (let i = 0; i < 3; i++) {
+      iDoc.spreadsheet.insert_column(i);
+    }
+    // Set header row.
+    for (let i = 0; i < 3; i++) {
+      iDoc.spreadsheet.edit_cell(0, i, "XYZ");
+    }
+  });
   return iDoc.save();
 }
 
@@ -31,12 +33,17 @@ const wsProvider = new WebSocketNetwork(
 
 function RemoveKeepCollabs() {
   // Initialization of the JSX display.
-  const initialState = useMemo(() => cDoc.spreadsheet.cells(), [cDoc]);
+  console.log(cDoc);
+  console.log(cDoc.spreadsheet);
+  console.log(cDoc.spreadsheet.cells);
+  console.log(cDoc.spreadsheet.cells());
+  const initialState = useMemo(() => cDoc.spreadsheet.cells(), []);
   const [spreadsheet, setSpreadsheet] = useState(initialState.slice(1));
 
   const [headers, setHeaders] = useState(initialState[0]);
 
   const [connectionStatus, setConnectionStatus] = useState("");
+  const [connected, setConnected] = useState(true);
 
   // Rebuild the spreadsheet when it change (Any event), waiting until
   // the next cDoc.Change event (batching).
@@ -128,7 +135,7 @@ function RemoveKeepCollabs() {
   };
 
   const handleCellBlur = (rowIndex, colIndex, value) => {
-    cDoc.spreadsheet.edit_cell(rowIndex, colIndex, value);
+    cDoc.spreadsheet.edit_cell(rowIndex + 1, colIndex, value);
   };
 
   // - Context menu selections
@@ -327,34 +334,45 @@ function RemoveKeepCollabs() {
       </table>
       WebSocket:
       <div className="wsStatus">
-        {wsProvider.wsconnecting ? (
-          <span title="Connecting">
-            <img
-              alt={connectionStatus}
-              height="16em"
-              src="https://cdn-icons-png.flaticon.com/512/3031/3031712.png"
-            />{" "}
-            Connecting to websocket...
-          </span>
-        ) : wsProvider.wsconnected ? (
-          <span title="Connected">
-            <img
-              alt={connectionStatus}
-              height="16em"
-              src="https://cdn-icons-png.flaticon.com/512/2983/2983692.png"
-            />{" "}
-            <button onClick={() => wsProvider.disconnect()}>Disconnect</button>
-          </span>
-        ) : (
-          <span title="Disonnected">
-            <img
-              alt={connectionStatus}
-              height="16em"
-              src="https://cdn-icons-png.flaticon.com/512/1144/1144833.png"
-            />{" "}
-            <button onClick={() => wsProvider.connect()}>Reconnect</button>
-          </span>
-        )}
+        {
+          /*wsProvider.ws.readyState === WebSocket.CONNECTING
+          ? <span title='Connecting'><img alt={connectionStatus} height='16em' src="https://cdn-icons-png.flaticon.com/512/3031/3031712.png" /> Connecting to websocket...</span>
+          :*/ connected ? (
+            <span title="Connected">
+              <img
+                alt={connectionStatus}
+                height="16em"
+                src="https://cdn-icons-png.flaticon.com/512/2983/2983692.png"
+              />{" "}
+              <button
+                onClick={() => {
+                  wsProvider.receiveConnected = false;
+                  wsProvider.sendConnected = false;
+                  setConnected(false);
+                }}
+              >
+                Disconnect
+              </button>
+            </span>
+          ) : (
+            <span title="Disonnected">
+              <img
+                alt={connectionStatus}
+                height="16em"
+                src="https://cdn-icons-png.flaticon.com/512/1144/1144833.png"
+              />{" "}
+              <button
+                onClick={() => {
+                  wsProvider.receiveConnected = true;
+                  wsProvider.sendConnected = true;
+                  setConnected(true);
+                }}
+              >
+                Reconnect
+              </button>
+            </span>
+          )
+        }
       </div>
       {/* TODO */}
       {/* yDoc: <br />

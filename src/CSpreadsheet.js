@@ -138,10 +138,10 @@ export class CSpreadsheet extends CObject {
       (init) => new CKeepList(init, (valueInit) => new CCol(valueInit))
     );
     /** @type {CValueMap<[CollabID<CRow>, CollabID<CCol>], string>} */
-    this.cells = super.registerCollab("cells", (init) => new CValueMap(init));
+    this._cells = super.registerCollab("cells", (init) => new CValueMap(init));
 
     // Lazy events.
-    for (const collab of [this.rows, this.cols, this.cells]) {
+    for (const collab of [this.rows, this.cols, this._cells]) {
       collab.on("Any", (e) => this.emit("Any", e));
     }
   }
@@ -158,7 +158,7 @@ export class CSpreadsheet extends CObject {
     const rowID = this.rows.idOf(this.rows.get(row));
     const colID = this.cols.idOf(this.cols.get(col));
     // TODO: delete instead, if value === ""?
-    this.cells.set([rowID, colID], value);
+    this._cells.set([rowID, colID], value);
   }
 
   /**
@@ -186,8 +186,8 @@ export class CSpreadsheet extends CObject {
   }
 
   cells() {
-    const rowsArr = [...this.rows()];
-    const colsArr = [...this.cols()];
+    const rowsArr = [...this.rows];
+    const colsArr = [...this.cols];
     /** @type {string[][]} */
     const ans = [];
     for (let r = 0; r < rowsArr.length; r++) {
@@ -196,7 +196,7 @@ export class CSpreadsheet extends CObject {
       for (let c = 0; c < colsArr.length; c++) {
         const col = colsArr[c];
         ans[r][c] =
-          this.cells.get([this.rows.idOf(row), this.cols.idOf(col)]) ?? "";
+          this._cells.get([this.rows.idOf(row), this.cols.idOf(col)]) ?? "";
       }
     }
     return ans;
@@ -220,7 +220,7 @@ export class SpreadsheetDoc extends AbstractDoc {
     super(options);
 
     /** @type {CSpreadsheet} */
-    this.spreadsheet = super.registerCollab(
+    this.spreadsheet = this.runtime.registerCollab(
       "",
       (init) => new CSpreadsheet(init)
     );

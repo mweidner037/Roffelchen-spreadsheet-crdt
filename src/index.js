@@ -28,6 +28,7 @@ root.render(
       <button className='modeTab' onClick={event => openModeTab(event, 'nested')}>Nested Map</button>
       <button className='modeTab' onClick={event => openModeTab(event, 'removeWins')}>Fixed Elements</button>
       <button className='modeTab' onClick={event => openModeTab(event, 'removeKeep')}>Fixed Elements<br /><small>(Remove-keep)</small></button>
+      <button className='modeTab' onClick={event => openModeTab(event, 'removeKeepCollabs')}>Fixed Elements<br /><small>(Remove-keep Collabs)</small></button>
     </div>
     <div id="removeWins" className="modeTabContent" style={{ display: 'none' }}>
       <FixedElements />
