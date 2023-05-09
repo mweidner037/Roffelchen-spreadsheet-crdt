@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@collabs/collabs": "^0.10.2",
+    "@collabs/ws-client": "^0.10.2",
+    "@collabs/ws-server": "^0.10.2",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/material": "^5.11.6",
@@ -22,7 +24,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "collabs-server": "node ./collabs-server.js"
   },
   "eslintConfig": {
     "extends": [

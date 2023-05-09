@@ -19,7 +19,11 @@ You may also see any lint errors in the console.
 
 `npx y-websocket-server`
 
-Runs the websocket server with the default port 1234.
+Runs the Yjs websocket server with the default port 1234.
+
+`npm run collabs-server`
+
+Runs the Collabs websocket server with the default port 1235.
 
 ### First time setup/ missing packages
 
